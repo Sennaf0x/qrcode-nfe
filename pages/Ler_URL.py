@@ -16,72 +16,6 @@ import os
 
 st.set_page_config(layout="wide")
 
-#if os.getenv('HOME') == '/home/adminuser':
-#    subprocess.call(['./setup.sh'])
-#
-#def decode_qr_code(frame):
-#    """
-#    Decodes QR codes in the given image frame.
-#
-#    Parameters:
-#    frame (numpy.ndarray): The image frame to scan for QR codes.
-#
-#    Returns:
-#    list: A list of decoded QR code data.
-#    """
-#    decoded_objects = pyzbar.decode(frame)
-#    qr_codes = [obj.data.decode('utf-8') for obj in decoded_objects]
-#    return qr_codes
-#
-#
-#def scan_qr_code():
-#    st.title("QR Code Scanner")
-#    st.write("Click the button below to start the camera and scan a QR code.")
-#
-#    # Initialize session state for control buttons and decoded message
-#    if "scanning" not in st.session_state:
-#        st.session_state.scanning = False
-#
-#    if "decoded_message" not in st.session_state:
-#        st.session_state.decoded_message = None
-#
-#    def start_scanning():
-#        st.session_state.scanning = True
-#
-#    def stop_scanning():
-#        st.session_state.scanning = False
-#
-#    if not st.session_state.scanning:
-#        if st.button('Start Scanning', key='start'):
-#            start_scanning()
-#
-#    if st.session_state.scanning:
-#        cap = cv2.VideoCapture(0)
-#        stframe = st.empty()
-#
-#        while st.session_state.scanning:
-#            ret, frame = cap.read()
-#            if not ret:
-#                st.write("Failed to capture image.")
-#                break
-#
-#            qr_codes = decode_qr_code(frame)
-#
-#            # Display the frame
-#            stframe.image(frame, channels="BGR")
-#
-#            # Display the decoded QR codes if it's a new message
-#            if qr_codes:
-#                if st.session_state.decoded_message != qr_codes[0]:
-#                    st.session_state.decoded_message = qr_codes[0]
-#                    st.success(f"Decoded QR Code: {qr_codes[0]}")
-#                    break
-#
-#        if st.button('Stop Scanning', key='stop', on_click=stop_scanning):
-#            cap.release()
-#            cv2.destroyAllWindows()
-#
-
 def decode_qr_code(image):
     qr_codes = pyzbar.decode(image)
     decoded_messages = [qr.data.decode('utf-8') for qr in qr_codes]
@@ -91,25 +25,10 @@ def decode_qr_code(image):
 if "decoded_message" not in st.session_state:
     st.session_state.decoded_message = None
 
-def upload_and_decode_qr():
+nfe_url = st.text_input("Insira a URL da nota fiscal aqui")
 
-    img_file_buffer = st.camera_input("Escanei o QRcode")
-    
-    if img_file_buffer is not None:
-        image = Image.open(img_file_buffer)
-        image_np = np.array(image)
-        #st.image(image_np, caption='Uploaded Image.', use_column_width=True)
-        st.write("")
-        qr_codes = decode_qr_code(image_np)
-        if qr_codes:
-            st.session_state.decoded_message = qr_codes[0]
-            st.success(f"Decoded QR Code: {qr_codes[0]}")
-        else:
-            st.error("No QR code found in the image.")
-st.write('''
-         <h1>Escanei o QR code</h1>
-         ''',unsafe_allow_html=True)
-upload_and_decode_qr()
+if nfe_url:
+    nfe_url = st.session_state_decoded_message
 
 if st.session_state.decoded_message:
     url = st.session_state.decoded_message
